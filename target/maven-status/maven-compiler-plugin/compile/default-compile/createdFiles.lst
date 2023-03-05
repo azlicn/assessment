@@ -1,0 +1,10 @@
+com/maybank/assessment/service/ClientService.class
+com/maybank/assessment/AssessmentApplication.class
+com/maybank/assessment/repo/ClientRepository.class
+com/maybank/assessment/ServletInitializer.class
+com/maybank/assessment/entity/Client.class
+com/maybank/assessment/service/IClientService.class
+com/maybank/assessment/config/SpringFoxConfig.class
+com/maybank/assessment/thirdparty/CentralBankApiClient.class
+com/maybank/assessment/aop/RequestResponseLoggerAspect.class
+com/maybank/assessment/controller/ClientController.class
