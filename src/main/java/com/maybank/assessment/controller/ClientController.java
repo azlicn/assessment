@@ -27,6 +27,14 @@ public class ClientController {
         this.thirdPartyClientApi = thirdPartyClientApi;
     }
 
+    /**
+     * Search all client by name,
+     * @param firstName
+     * @param lastName
+     * @param page
+     * @param size
+     * @return a list of client with pagination
+     */
     @GetMapping(value = "/clients")
     @ApiOperation(value = "Get all clients", response=Client.class)
     public ResponseEntity<Map<String, Object>> getAllClients(
@@ -45,8 +53,6 @@ public class ClientController {
                 clientPage = clientService.getAllClients(paging);
             else
                 clientPage = clientService.searchClientByNameWithPagination(firstName, lastName, paging);
-            /*else
-                clientPage = clientService.getAllClients(paging);*/
 
             clients = clientPage.getContent();
 
@@ -63,6 +69,11 @@ public class ClientController {
 
     }
 
+    /**
+     * Get client by id
+     * @param id
+     * @return a single client
+     */
     @GetMapping("/clients/{id}")
     @ApiOperation(value = "Get client by Id", notes="Please provide valid client id to get the client info", response=Client.class)
     public ResponseEntity<Client> get(@PathVariable Long id) {
@@ -74,6 +85,11 @@ public class ClientController {
         }
     }
 
+    /**
+     * Create a new client
+     * @param client
+     * @return a saved client
+     */
     @PostMapping("/clients")
     @ApiOperation(value = "Create a new client", response=Client.class)
     public ResponseEntity<Client> create(@RequestBody Client client) {
@@ -85,6 +101,12 @@ public class ClientController {
         }
     }
 
+    /**
+     * Update an existing client
+     * @param client
+     * @param id
+     * @return an updated client
+     */
     @PutMapping("/clients/{id}")
     @ApiOperation(value = "Update an existing client", response=Client.class)
     public ResponseEntity<Client> update(@RequestBody Client client, @PathVariable Long id) {
@@ -100,6 +122,11 @@ public class ClientController {
         }
     }
 
+    /**
+     * Delete a client
+     * @param id
+     * @return no value
+     */
     @DeleteMapping("/clients/{id}")
     @ApiOperation(value = "Delete an existing client")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
@@ -111,6 +138,10 @@ public class ClientController {
         }
     }
 
+    /**
+     * Call a third party api client
+     * @return string value
+     */
     @GetMapping("/opr")
     @ApiOperation(value = "Call nested Api")
     public ResponseEntity<String> callNestedApi() {
