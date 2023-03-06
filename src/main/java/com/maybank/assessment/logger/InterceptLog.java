@@ -19,6 +19,7 @@ public class InterceptLog implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         if(request.getMethod().equals(HttpMethod.GET.name())
                 || request.getMethod().equals(HttpMethod.DELETE.name())
+                || request.getMethod().equals(HttpMethod.POST.name())
                 || request.getMethod().equals(HttpMethod.PUT.name()))    {
             loggingService.displayReq(request,null);
         }

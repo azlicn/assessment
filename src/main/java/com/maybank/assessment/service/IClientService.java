@@ -7,11 +7,10 @@ import org.springframework.data.domain.Pageable;
 public interface IClientService {
 
     Page<Client> getAllClients(Pageable pageable);
-    Page<Client> searchClientByNameWithPagination(String firstName, Pageable pageable);
+    Page<Client> searchClientByNameWithPagination(String firstName, String lastName, Pageable pageable);
     Client getClientById(Long id);
-    Client findByEmail(String email);
-    Client save(Client client);
-    void delete(Long id);
+    Client saveClient(Client client);
+    void deleteClient(Long id);
 
 
 }

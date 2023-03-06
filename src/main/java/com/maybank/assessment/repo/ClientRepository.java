@@ -11,6 +11,8 @@ import java.util.Optional;
 @Repository
 public interface ClientRepository extends JpaRepository<Client, Long> {
 
+    Page<Client> findByFirstNameOrLastNameContaining(String firstName, String lastName, Pageable pageable);
     Page<Client> findByFirstNameContaining(String firstName, Pageable pageable);
+    Page<Client> findByLastNameContaining(String lastName, Pageable pageable);
     Optional<Client> findByEmail(String email);
 }

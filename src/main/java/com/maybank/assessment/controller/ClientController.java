@@ -2,7 +2,8 @@ package com.maybank.assessment.controller;
 
 import com.maybank.assessment.entity.Client;
 import com.maybank.assessment.service.ClientService;
-import com.maybank.assessment.thirdparty.CentralBankApiClient;
+import com.maybank.assessment.thirdparty.ThirdPartyClientApi;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 
@@ -19,17 +19,19 @@ import java.util.*;
 public class ClientController {
 
     private final ClientService clientService;
-    private final CentralBankApiClient centralBankApiClient;
+    private final ThirdPartyClientApi thirdPartyClientApi;
 
     @Autowired
-    public ClientController(ClientService clientService, CentralBankApiClient centralBankApiClient) {
+    public ClientController(ClientService clientService, ThirdPartyClientApi thirdPartyClientApi) {
         this.clientService = clientService;
-        this.centralBankApiClient = centralBankApiClient;
+        this.thirdPartyClientApi = thirdPartyClientApi;
     }
 
     @GetMapping(value = "/clients")
+    @ApiOperation(value = "Get all clients", response=Client.class)
     public ResponseEntity<Map<String, Object>> getAllClients(
             @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String lastName,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
         ) {
@@ -39,10 +41,12 @@ public class ClientController {
             Pageable paging = PageRequest.of(page, size);
 
             Page<Client> clientPage;
-            if (firstName == null)
+            if (firstName == null && lastName == null)
                 clientPage = clientService.getAllClients(paging);
             else
-                clientPage = clientService.searchClientByNameWithPagination(firstName, paging);
+                clientPage = clientService.searchClientByNameWithPagination(firstName, lastName, paging);
+            /*else
+                clientPage = clientService.getAllClients(paging);*/
 
             clients = clientPage.getContent();
 
@@ -60,6 +64,7 @@ public class ClientController {
     }
 
     @GetMapping("/clients/{id}")
+    @ApiOperation(value = "Get client by Id", notes="Please provide valid client id to get the client info", response=Client.class)
     public ResponseEntity<Client> get(@PathVariable Long id) {
         try {
             Client client = clientService.getClientById(id);
@@ -70,9 +75,10 @@ public class ClientController {
     }
 
     @PostMapping("/clients")
-    public ResponseEntity<Client> add(@RequestBody Client client) {
+    @ApiOperation(value = "Create a new client", response=Client.class)
+    public ResponseEntity<Client> create(@RequestBody Client client) {
         try {
-            Client savedClient = clientService.save(client);
+            Client savedClient = clientService.saveClient(client);
             return new ResponseEntity<>(savedClient, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -80,13 +86,14 @@ public class ClientController {
     }
 
     @PutMapping("/clients/{id}")
+    @ApiOperation(value = "Update an existing client", response=Client.class)
     public ResponseEntity<Client> update(@RequestBody Client client, @PathVariable Long id) {
         try {
             Client existProduct = clientService.getClientById(id);
             existProduct.setFirstName(client.getFirstName());
             existProduct.setLastName(client.getLastName());
             existProduct.setEmail(client.getEmail());
-            Client updatedCLient = clientService.save(existProduct);
+            Client updatedCLient = clientService.saveClient(existProduct);
             return new ResponseEntity<>(updatedCLient, HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -94,24 +101,21 @@ public class ClientController {
     }
 
     @DeleteMapping("/clients/{id}")
+    @ApiOperation(value = "Delete an existing client")
     public ResponseEntity<HttpStatus> delete(@PathVariable Long id) {
         try {
-            clientService.delete(id);
+            clientService.deleteClient(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @GetMapping("/centralBank")
-    public ResponseEntity<String> nestedApiCall() {
-        /*String response = centralBankApiClient.callThirdPartyApi();
-        return ResponseEntity.ok(response);*/
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.getForObject("https://api.instantwebtools.net/v1/airlines/1", String.class);
-
-        System.out.println(result);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    @GetMapping("/opr")
+    @ApiOperation(value = "Call nested Api")
+    public ResponseEntity<String> callNestedApi() {
+        String response = thirdPartyClientApi.callThirdPartyApi();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 

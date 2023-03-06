@@ -1,34 +1,21 @@
 package com.maybank.assessment.service;
 
 import com.maybank.assessment.entity.Client;
-import com.maybank.assessment.repo.ClientRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Optional;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.*;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.mockito.Mockito.when;
-
-@SpringBootTest
-@AutoConfigureMockMvc
+@ExtendWith(SpringExtension.class)
 public class ClientServiceTest {
 
-    @Autowired
+    @Mock
     private ClientService clientService;
-
-    @MockBean
-    private ClientRepository clientRepository;
-
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
 
     @Test
     public void testGetClientById() {
@@ -38,13 +25,43 @@ public class ClientServiceTest {
         expectedClient.setFirstName("Ahmad");
         expectedClient.setLastName("Ali");
         expectedClient.setEmail("ahmad.ali@gmail.com");
-
-        when(clientRepository.findById(id)).thenReturn(Optional.of(expectedClient));
-
-        Client actualClient = clientService.getClientById(id);
-
-        assertThat(actualClient).isNotNull();
-        assertThat(actualClient.getId()).isEqualTo(expectedClient.getId());
-        assertThat(actualClient.getFirstName()).isEqualTo(expectedClient.getFirstName());
+        when(clientService.getClientById(1L)).thenReturn(expectedClient);
+        assertEquals(clientService.getClientById(1L).getFirstName(), "Ahmad");
+        assertEquals(clientService.getClientById(1L).getLastName(), "Ali");
+        assertEquals(clientService.getClientById(1L).getEmail(), "ahmad.ali@gmail.com");
     }
+
+    @Test
+    public void testSaveClient() {
+        Client client = new Client();
+        client.setId(1L);
+        client.setFirstName("Mohd");
+        client.setLastName("Rasul");
+        client.setEmail("mohd@gmail.com");
+        clientService.saveClient(client);
+        verify(clientService, times(1)).saveClient(client);
+        ArgumentCaptor<Client> orderArgumentCaptor = ArgumentCaptor.forClass(Client.class);
+        verify(clientService).saveClient(orderArgumentCaptor.capture());
+        Client clientCreated = orderArgumentCaptor.getValue();
+        assertNotNull(clientCreated.getId());
+        assertEquals("Mohd", clientCreated.getFirstName());
+    }
+
+    @Test
+    public void testDeleteClient() {
+
+        Client client = new Client();
+        client.setId(13L);
+        client.setFirstName("Abdul");
+        client.setLastName("Rahim");
+        client.setEmail("abdul@gmail.com");
+        clientService.deleteClient(client.getId());
+        verify(clientService, times(1)).deleteClient(client.getId());
+        ArgumentCaptor<Long> orderArgumentCaptor = ArgumentCaptor.forClass(Long.class);
+        verify(clientService).deleteClient(orderArgumentCaptor.capture());
+        Long orderIdDeleted = orderArgumentCaptor.getValue();
+        assertNotNull(orderIdDeleted);
+        assertEquals(13L, orderIdDeleted);
+    }
+
 }

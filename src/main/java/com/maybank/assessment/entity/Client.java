@@ -1,5 +1,6 @@
 package com.maybank.assessment.entity;
 
+import io.swagger.annotations.ApiModel;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Entity
 @Table(name = "clients")
+@ApiModel(description = "This object hold the information of Client")
 public class Client implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
