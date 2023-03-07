@@ -41,4 +41,5 @@ mvn test
 
 * Navigate to [Swagger Document](http://localhost:8080/swagger-ui/index.html) for API Documentation.
 * Postman Collection is under postman folder
+* Log file is under logs folder
  
