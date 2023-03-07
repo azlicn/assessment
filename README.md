@@ -12,13 +12,13 @@ docker compose -f docker/docker-compose.yml up
 ```
 Once done, make sure to create a database called TESTDB, before proceed to the next step
 
-## Build
+## Build & Run
 
-You may build the project using your preferred IDE or using the following command
+You may run the project using your preferred IDE or using the following command
 
 ```bash
-# This builds the application
-mvn compile
+# This run the application
+mvn spring-boot:run
 ```
 
 ## Development
