@@ -17,7 +17,7 @@ Once done, make sure to create a database called TESTDB, before proceed to the n
 You may build the project using your preferred IDE or using the following command
 
 ```bash
-# This builds and tests the application (Note: Build the application first before spinning up docker)
+# This builds the application
 mvn compile
 ```
 
