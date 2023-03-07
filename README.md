@@ -37,7 +37,7 @@ You may run the tests using your preferred IDE or using the following command:
 mvn test
 ```
 
-## Reference
+## Notes
 
 * Navigate to [Swagger Document](http://localhost:8080/swagger-ui/index.html) for API Documentation.
 * Postman Collection is under postman folder
